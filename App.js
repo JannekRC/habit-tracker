@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Calculator from "./Calculator";
 import Main from "./Main";
 import AddHabit from "./AddHabit";
+import { Intro } from "./Main";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -12,6 +13,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Main" component={Main} options={{headerShown:false}}/>
+        <Stack.Screen name="Intro" component={Intro} options={{headerShown:false}}/>
         <Stack.Screen name="AddHabit" component={AddHabit} options={{headerShown:false}}/>
         <Stack.Screen name="Calculator" component={Calculator} options={{headerShown:false}}/>
       </Stack.Navigator>

@@ -5,15 +5,21 @@ import { Header, Button, Input, CheckBox } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AddHabit({ navigation }) {
-  const [habits, setHabits] = useState({
-    yoga: "false",
-    mediation: "false",
-    jogging: "false",
-  })
+  const [yoga, setYoga] = useState("false")
+  const [mediation, setMediation] = useState("false")
+  const [jogging, setJogging] = useState("false")
+
+  const [habit, setHabit] = useState("");
   
   const selected = () => {
     if (yoga === true){
-      
+      setHabit("Yoga");
+    }
+    if (mediation === true){
+      setHabit("Mediation");
+    }
+    if (jogging === true){
+      setHabit("Jogging");
     }
   };
   ;
@@ -29,6 +35,22 @@ export default function AddHabit({ navigation }) {
         title="Yoga"
         checkedIcon="dot-circle-o"
         uncheckedIcon="circle-o"
+        checked={yoga}
+        onPress={() => setYoga(!yoga)}
+      />
+      <CheckBox
+        title="Meditation"
+        checkedIcon="dot-circle-o"
+        uncheckedIcon="circle-o"
+        checked={mediation}
+        onPress={() => setMediation(!mediation)}
+      />
+      <CheckBox
+        title="Jogging"
+        checkedIcon="dot-circle-o"
+        uncheckedIcon="circle-o"
+        checked={jogging}
+        onPress={() => setJogging(!jogging)}
       />
       <Button
         title={"Continue!"}
