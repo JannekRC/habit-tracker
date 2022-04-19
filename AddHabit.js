@@ -3,34 +3,59 @@ import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { Header, Button, Input, CheckBox } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function AddHabit({ navigation }) {
-  const [yoga, setYoga] = useState("false")
-  const [mediation, setMediation] = useState("false")
-  const [jogging, setJogging] = useState("false")
+  // initialize firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyBBSuf8iiACnQVyHGVm-OOfYksYIVdo7Sc",
+    authDomain: "habittracker-9fc6a.firebaseapp.com",
+    databaseURL:
+      "https://habittracker-9fc6a-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "habittracker-9fc6a",
+    storageBucket: "habittracker-9fc6a.appspot.com",
+    messagingSenderId: "346712267295",
+    appId: "1:346712267295:web:2bab2cfcea760622ee132a",
+  };
+
+  initializeApp(firebaseConfig);
+  //
+
+  const [yoga, setYoga] = useState(false);
+  const [mediation, setMediation] = useState(false);
+  const [jogging, setJogging] = useState(false);
 
   const [habit, setHabit] = useState("");
-  
-  const selected = () => {
-    if (yoga === true){
-      setHabit("Yoga");
-    }
-    if (mediation === true){
-      setHabit("Mediation");
-    }
-    if (jogging === true){
-      setHabit("Jogging");
-    }
-  };
-  ;
+
+  // const addSelected = () => {
+  //   if (yoga === true) {
+  //     setHabit("Yoga");
+  //   }
+  //   if (mediation === true) {
+  //     setHabit("Mediation");
+  //   }
+  //   if (jogging === true) {
+  //     setHabit("Jogging");
+  //   }
+  // };
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
         <StatusBar style="auto" />
         <Text style={{ fontSize: 25, fontWeight: "bold" }}>New Habit</Text>
       </View>
-      <Input placeholder="Your new habit"></Input>
+
+      {/* INPUT FIELD */}
+      <Input
+        placeholder="Your new habit"
+        onChangeText={(value) => setHabit(value)}
+      ></Input>
       <Text style={{ fontSize: 25, fontWeight: "bold" }}>or choose:</Text>
+
+      {/* CHECKBOXES */}
       <CheckBox
         title="Yoga"
         checkedIcon="dot-circle-o"
@@ -52,10 +77,92 @@ export default function AddHabit({ navigation }) {
         checked={jogging}
         onPress={() => setJogging(!jogging)}
       />
+
+      {/* CONTINUE BUTTON */}
       <Button
         title={"Continue!"}
-        onPress={() => navigation.navigate("Calculator")}
+        onPress={() => navigation.navigate("SetReminders", { habit })}
       ></Button>
+    </SafeAreaView>
+  );
+}
+
+export function SetReminders({ route, navigation }) {
+  //firebase
+  const db = getFirestore();
+
+  const colRef = collection(db, "habits");
+
+  getDocs(colRef)
+    .then((snapshot) => {
+      let habits = [];
+      snapshot.docs.forEach((doc) => {
+        habits.push({ ...doc.data(), id: doc.id });
+      });
+      console.log(habits);
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+
+  //
+
+  //date picker
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [mode, setMode] = useState("time");
+  const [show, setShow] = useState(true);
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setShow(false);
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showTimepicker = () => {
+    showMode("time");
+  };
+  //
+
+  const [name, setName] = useState("");
+
+  const addHabit = () => {
+    console.log(route.params.habit);
+    addDoc(colRef, {
+      habit: route.params.habit,
+      day: "Friday",
+    }).then(() => {
+      navigation.navigate("SetReminders");
+    });
+    console.log("we did it");
+  };
+  return (
+    <SafeAreaView style={styles.container}>
+      <View>
+        <StatusBar style="auto" />
+        <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+          When ya wanna?
+        </Text>
+        <View>
+          <Button onPress={showTimepicker} title="Show time picker!" />
+        </View>
+        <Text>selected: {date.toLocaleString()}</Text>
+        {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            onChange={onChange}
+          />
+        )}
+      </View>
+      <Text>name</Text>
+      <Button title={"Continue"} onPress={() => addHabit()}></Button>
     </SafeAreaView>
   );
 }

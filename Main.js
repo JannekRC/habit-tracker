@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { Text, View, FlatList, StyleSheet, Alert } from "react-native";
 import { Header, Button, Input, ListItem } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs, collectionGroup } from "firebase/firestore";
 
 export default function Main({ navigation }) {
   return (
@@ -20,19 +22,26 @@ export default function Main({ navigation }) {
 }
 
 export function Intro({ navigation }) {
-  const [name, setName] = useState ("");
+  const [name, setName] = useState("");
+
+  const saveItem = () => {
+    navigation.navigate("AddHabit");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
         <StatusBar style="auto" />
-        <Text style={{ fontSize: 25, fontWeight: "bold" }}>What do you want to be called?</Text>
+        <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+          What do you want to be called?
+        </Text>
       </View>
-      <Input placeholder="Name or nickname. Nobody's judging!" onChangeText={value => setName(value)}></Input>
+      <Input
+        placeholder="Name or nickname. Nobody's judging!"
+        onChangeText={(value) => setName(value)}
+      ></Input>
       <Text>{name}</Text>
-      <Button
-        title={"Continue"}
-        onPress={() => navigation.navigate("AddHabit")}
-      ></Button>
+      <Button title={"Continue"} onPress={() => saveItem()}></Button>
     </SafeAreaView>
   );
 }
