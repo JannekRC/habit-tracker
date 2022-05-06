@@ -128,15 +128,16 @@ export function SetReminders({ route, navigation }) {
   };
   //
 
-  const [name, setName] = useState("");
+  const [day, setDay] = useState("");
 
   const addHabit = () => {
     console.log(route.params.habit);
     addDoc(colRef, {
       habit: route.params.habit,
-      day: "Friday",
+      day: day,
+      time: date.toLocaleTimeString(),
     }).then(() => {
-      navigation.navigate("SetReminders");
+      navigation.navigate("AddHabit");
     });
     console.log("we did it");
   };
@@ -144,13 +145,12 @@ export function SetReminders({ route, navigation }) {
     <SafeAreaView style={styles.container}>
       <View>
         <StatusBar style="auto" />
-        <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-          When ya wanna?
-        </Text>
+        <Text style={{ fontSize: 25, fontWeight: "bold" }}>When ya wanna?</Text>
+
         <View>
-          <Button onPress={showTimepicker} title="Show time picker!" />
+          <Button onPress={() => showTimepicker} title="Show time picker!" />
         </View>
-        <Text>selected: {date.toLocaleString()}</Text>
+        <Text>At {date.toLocaleTimeString()}</Text>
         {show && (
           <DateTimePicker
             testID="dateTimePicker"
@@ -160,8 +160,19 @@ export function SetReminders({ route, navigation }) {
             onChange={onChange}
           />
         )}
+
+        {/* CHOOSE DAYS */}
+        <Text>on</Text>
+        <View>
+          <Button onPress={() => setDay("Monday")} title="M" />
+          <Button onPress={() => setDay("Tuesday")} title="T" />
+          <Button onPress={() => setDay("Wednesday")} title="W" />
+          <Button onPress={() => setDay("Tuesday")} title="T" />
+          <Button onPress={() => setDay("Friday")} title="F" />
+          <Button onPress={() => setDay("Sunday")} title="S" />
+        </View>
       </View>
-      <Text>name</Text>
+      <Text></Text>
       <Button title={"Continue"} onPress={() => addHabit()}></Button>
     </SafeAreaView>
   );
