@@ -29,17 +29,23 @@ export default function AddHabit({ navigation }) {
 
   const [habit, setHabit] = useState("");
 
-  // const addSelected = () => {
-  //   if (yoga === true) {
-  //     setHabit("Yoga");
-  //   }
-  //   if (mediation === true) {
-  //     setHabit("Mediation");
-  //   }
-  //   if (jogging === true) {
-  //     setHabit("Jogging");
-  //   }
-  // };
+  //set habit from checkbox/radiobuttons (and navigate to next page)
+  const setSelected = () => {
+    let habit = "";
+    if (yoga === true) {
+      habit = "Yoga";
+      setHabit(habit);
+    }
+    if (mediation === true) {
+      habit = "Mediation";
+      setHabit(habit);
+    }
+    if (jogging === true) {
+      habit = "Jogging";
+      setHabit(habit);
+    }
+    navigation.navigate("SetReminders", { habit });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -56,6 +62,7 @@ export default function AddHabit({ navigation }) {
       <Text style={{ fontSize: 25, fontWeight: "bold" }}>or choose:</Text>
 
       {/* CHECKBOXES */}
+
       <CheckBox
         title="Yoga"
         checkedIcon="dot-circle-o"
@@ -81,7 +88,8 @@ export default function AddHabit({ navigation }) {
       {/* CONTINUE BUTTON */}
       <Button
         title={"Continue!"}
-        onPress={() => navigation.navigate("SetReminders", { habit })}
+        onPress={() => setSelected()}
+        //onPress={() => navigation.navigate("SetReminders", { habit })}
       ></Button>
     </SafeAreaView>
   );
@@ -137,7 +145,7 @@ export function SetReminders({ route, navigation }) {
       day: day,
       time: date.toLocaleTimeString(),
     }).then(() => {
-      navigation.navigate("AddHabit");
+      navigation.navigate("ListHabits", { db });
     });
     console.log("we did it");
   };

@@ -15,36 +15,36 @@ export default function Main({ navigation }) {
       </View>
       <Button
         title={"Start"}
-        onPress={() => navigation.navigate("Intro")}
+        onPress={() => navigation.navigate("AddHabit")}
       ></Button>
     </SafeAreaView>
   );
 }
 
-export function Intro({ navigation }) {
-  const [name, setName] = useState("");
+// export function Intro({ navigation }) {
+//   const [name, setName] = useState("");
 
-  const saveItem = () => {
-    navigation.navigate("AddHabit");
-  };
+//   const saveItem = () => {
+//     navigation.navigate("AddHabit");
+//   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <StatusBar style="auto" />
-        <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-          What do you want to be called?
-        </Text>
-      </View>
-      <Input
-        placeholder="Name or nickname. Nobody's judging!"
-        onChangeText={(value) => setName(value)}
-      ></Input>
-      <Text>{name}</Text>
-      <Button title={"Continue"} onPress={() => saveItem()}></Button>
-    </SafeAreaView>
-  );
-}
+//   return (
+//     <SafeAreaView style={styles.container}>
+//       <View>
+//         <StatusBar style="auto" />
+//         <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+//           What do you want to be called?
+//         </Text>
+//       </View>
+//       <Input
+//         placeholder="Name or nickname. Nobody's judging!"
+//         onChangeText={(value) => setName(value)}
+//       ></Input>
+//       <Text>{name}</Text>
+//       <Button title={"Continue"} onPress={() => saveItem()}></Button>
+//     </SafeAreaView>
+//   );
+// }
 
 const styles = StyleSheet.create({
   container: {
