@@ -89,7 +89,6 @@ export default function AddHabit({ navigation }) {
       <Button
         title={"Continue!"}
         onPress={() => setSelected()}
-        //onPress={() => navigation.navigate("SetReminders", { habit })}
       ></Button>
     </SafeAreaView>
   );
@@ -149,6 +148,7 @@ export function SetReminders({ route, navigation }) {
     });
     console.log("we did it");
   };
+  
   return (
     <SafeAreaView style={styles.container}>
       <View>

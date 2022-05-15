@@ -20,7 +20,8 @@ export default function ListHabits({ route, navigation }) {
           habits.push({ ...doc.data(), id: doc.id });
         });
         console.log(habits);
-        setItems(habits);
+        setItems(Object.values(habits));
+        console.log(items);
       })
       .catch((err) => {
         console.log(err.message);
