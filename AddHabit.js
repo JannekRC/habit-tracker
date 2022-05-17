@@ -1,50 +1,61 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Alert } from "react-native";
 import { Header, Button, Input, CheckBox } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-export default function AddHabit({ navigation }) {
-  // initialize firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyBBSuf8iiACnQVyHGVm-OOfYksYIVdo7Sc",
-    authDomain: "habittracker-9fc6a.firebaseapp.com",
-    databaseURL:
-      "https://habittracker-9fc6a-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "habittracker-9fc6a",
-    storageBucket: "habittracker-9fc6a.appspot.com",
-    messagingSenderId: "346712267295",
-    appId: "1:346712267295:web:2bab2cfcea760622ee132a",
-  };
+export default function AddHabit({ navigation, route }) {
+  // // initialize firebase
+  // const firebaseConfig = {
+  //   apiKey: "AIzaSyBBSuf8iiACnQVyHGVm-OOfYksYIVdo7Sc",
+  //   authDomain: "habittracker-9fc6a.firebaseapp.com",
+  //   databaseURL:
+  //     "https://habittracker-9fc6a-default-rtdb.europe-west1.firebasedatabase.app",
+  //   projectId: "habittracker-9fc6a",
+  //   storageBucket: "habittracker-9fc6a.appspot.com",
+  //   messagingSenderId: "346712267295",
+  //   appId: "1:346712267295:web:2bab2cfcea760622ee132a",
+  // };
 
-  initializeApp(firebaseConfig);
-  //
+  // initializeApp(firebaseConfig);
+  // //
+  const colRef = route.params.colRef;
 
   const [yoga, setYoga] = useState(false);
   const [mediation, setMediation] = useState(false);
   const [jogging, setJogging] = useState(false);
-
+  const [text, setText] = useState(undefined);
   const [habit, setHabit] = useState("");
 
   //set habit from checkbox/radiobuttons (and navigate to next page)
   const setSelected = () => {
-    let habit = "";
-    if (yoga === true) {
-      habit = "Yoga";
-      setHabit(habit);
+    let tempHabit = "";
+    if (text != undefined) {
+      tempHabit = text
+      setHabit(tempHabit);
+      navigation.navigate("SetReminders", { habit, colRef });
+    } else {
+      if (yoga === true) {
+        tempHabit = "Yoga";
+        setHabit(tempHabit);
+        navigation.navigate("SetReminders", { habit, colRef });
+      }
+      if (mediation === true) {
+        tempHabit = "Mediation";
+        setHabit(tempHabit);
+        navigation.navigate("SetReminders", { habit, colRef });
+      }
+      if (jogging === true) {
+        tempHabit = "Jogging";
+        setHabit(tempHabit);
+        navigation.navigate("SetReminders", { habit, colRef });
+      } else {
+        Alert.alert("Please either write the name of a habit, or select one");
+      }
     }
-    if (mediation === true) {
-      habit = "Mediation";
-      setHabit(habit);
-    }
-    if (jogging === true) {
-      habit = "Jogging";
-      setHabit(habit);
-    }
-    navigation.navigate("SetReminders", { habit });
   };
 
   return (
@@ -57,7 +68,7 @@ export default function AddHabit({ navigation }) {
       {/* INPUT FIELD */}
       <Input
         placeholder="Your new habit"
-        onChangeText={(value) => setHabit(value)}
+        onChangeText={(value) => setText(value)}
       ></Input>
       <Text style={{ fontSize: 25, fontWeight: "bold" }}>or choose:</Text>
 
@@ -86,19 +97,15 @@ export default function AddHabit({ navigation }) {
       />
 
       {/* CONTINUE BUTTON */}
-      <Button
-        title={"Continue!"}
-        onPress={() => setSelected()}
-      ></Button>
+      <Button title={"Continue!"} onPress={() => setSelected()}></Button>
     </SafeAreaView>
   );
 }
 
 export function SetReminders({ route, navigation }) {
   //firebase
-  const db = getFirestore();
 
-  const colRef = collection(db, "habits");
+  const colRef = route.params.colRef;
 
   getDocs(colRef)
     .then((snapshot) => {
@@ -144,16 +151,16 @@ export function SetReminders({ route, navigation }) {
       day: day,
       time: date.toLocaleTimeString(),
     }).then(() => {
-      navigation.navigate("ListHabits", { db });
+      navigation.navigate("ListHabits", { colRef });
     });
     console.log("we did it");
   };
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
         <StatusBar style="auto" />
-        <Text style={{ fontSize: 25, fontWeight: "bold" }}>When ya wanna?</Text>
+        <Text style={{ fontSize: 25, fontWeight: "bold" }}>When do you want to practice?</Text>
 
         <View>
           <Button onPress={() => showTimepicker} title="Show time picker!" />

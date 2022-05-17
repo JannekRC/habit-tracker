@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, FlatList, StyleSheet, Alert } from "react-native";
+import { Text, View, FlatList, StyleSheet, Alert } from "react-native";
 import { initializeApp } from "firebase/app";
-import { getFirestore, push, ref, onValue } from "firebase/database";
+import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
+import { Button } from "react-native-elements";
 
 export default function ListHabits({ route, navigation }) {
   const [items, setItems] = useState([]);
 
   //firebase
-  const db = getFirestore();
-
-  const colRef = collection(db, "habits");
+  const colRef = route.params.colRef;
 
   //update flatlist
-  useEffect(() => {
+ const updateFlatlist = () => {
     getDocs(colRef)
       .then((snapshot) => {
         let habits = [];
@@ -26,32 +25,53 @@ export default function ListHabits({ route, navigation }) {
       .catch((err) => {
         console.log(err.message);
       });
-  }, []);
+  }
 
+  useEffect(() => {
+    updateFlatlist()
+  }, []);
   //
 
-  // //update flatlist
-  // useEffect(() => {
-  //   onValue(habits, (snapshot) => {
-  //     const data = snapshot.val();
-  //     setItems(Object.values(data));
-  //   });
-  // }, []);
+  const listSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: "95%",
+          backgroundColor: "#CED0CE",
+          marginBottom: 20,
+        }}
+      />
+    );
+  };
 
   return (
     <View style={styles.container}>
       <FlatList
-        style={{ marginTop: "5%", marginLeft: "5%" }}
+        data={items}
         keyExtractor={(item, index) => index.toString()}
+        ItemSeparatorComponent={listSeparator}
         renderItem={({ item }) => (
           <View style={styles.list}>
-            <Text style={{ fontSize: 15 }}>
-              {item.habit}, {item.day}, {item.time}
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+              {item.habit}
+            </Text>
+            <Text style={{ fontSize: 18 }}>
+              {item.day} at {item.time.substring(0, item.time.length - 3)}
             </Text>
           </View>
         )}
-        data={items}
       />
+      <View style={{ marginBottom: 20 }}>
+      <Button
+          title={"Refresh"}
+          onPress={() => updateFlatlist()}
+        ></Button>
+        <Button
+          title={"Add new habit"}
+          onPress={() => navigation.navigate("AddHabit", { colRef })}
+        ></Button>
+      </View>
     </View>
   );
 }
@@ -59,15 +79,13 @@ export default function ListHabits({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginBottom: 20,
     marginTop: 100,
-    marginLeft: 20,
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
   list: {
-    flexDirection: "row",
+    flexDirection: "column",
     backgroundColor: "#fff",
     alignItems: "center",
   },
